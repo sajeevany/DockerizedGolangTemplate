@@ -1,2 +1,2 @@
 # DockerizedGolangTemplate
-Defines a templace repository to get started using golang
+Defines a template repo from which to write a golang service. Includes basic gin endpoint.
