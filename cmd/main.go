@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sajeevany/DockerizedGolangTemplate/internal/endpoints"
 	"github.com/sajeevany/DockerizedGolangTemplate/internal/logging"
+	lm "github.com/sajeevany/DockerizedGolangTemplate/internal/logging/middleware"
 	"github.com/sirupsen/logrus"
 )
 
@@ -35,8 +36,8 @@ func setupRouter(logger *logrus.Logger) *gin.Engine {
 	engine := gin.New()
 
 	//Add middleware
-	engine.Use(logging.SetCtxLogger(logger))
-	engine.Use(logging.LogRequest(logger))
+	engine.Use(lm.SetCtxLogger(logger))
+	engine.Use(lm.LogRequest(logger))
 	engine.Use(gin.Recovery())
 
 	return engine

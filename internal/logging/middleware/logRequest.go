@@ -1,4 +1,4 @@
-package logging
+package middleware
 
 import (
 	"fmt"
@@ -6,16 +6,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"time"
 )
-
-const LoggerKey = "logger"
-
-//SetCtxLogger - Sets a logger as defined by LoggerKey
-func SetCtxLogger(logger *logrus.Logger) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Set(LoggerKey, logger)
-		c.Next()
-	}
-}
 
 //LogRequest - Logs requests
 func LogRequest(logger *logrus.Logger) gin.HandlerFunc {
