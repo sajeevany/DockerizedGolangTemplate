@@ -5,16 +5,16 @@ import (
 	"github.com/sajeevany/DockerizedGolangTemplate/internal/health"
 )
 
-const HealthGroup  = "/health"
+const HealthGroup = "/health"
 const helloEndpoint = "/hello"
 
-func BuildHelloEndpoint() Endpoint{
+func BuildHelloEndpoint(handlers ...gin.HandlerFunc) Endpoint {
 	return Endpoint{
-		URL:     helloEndpoint,
-		Handlers: []gin.HandlerFunc{hello},
+		URL:      helloEndpoint,
+		Handlers: append(handlers, hello),
 	}
-} 
+}
 
-func hello(ctx *gin.Context){
+func hello(ctx *gin.Context) {
 	health.Hello(ctx)
 }

@@ -1,20 +1,45 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sajeevany/DockerizedGolangTemplate/internal/endpoints"
+	"github.com/sajeevany/DockerizedGolangTemplate/internal/logging"
+	"github.com/sirupsen/logrus"
 )
 
-const v1Api = "/api/vi"
+const v1Api = "/api/v1"
 
 func main() {
-	router := setupRouter()
+
+	//Create a universal logger
+	logger := logging.Init()
+
+	//Initialize router
+	router := setupRouter(logger)
+
+	//Setup routes
 	setupV1Routes(router)
-	router.Run()
+
+	//Use default route of 8080. TODO add config reader to get the port
+	err := router.Run(":8080")
+	if err != nil {
+		logger.Error("An error occurred when starting the router. <%v>", err)
+	}
+
 }
 
-func setupRouter() *gin.Engine {
-	return gin.Default()
+//setupRouter - Create the router and set middleware
+func setupRouter(logger *logrus.Logger) *gin.Engine {
+
+	engine := gin.New()
+
+	//Add middleware
+	engine.Use(logging.SetCtxLogger(logger))
+	engine.Use(logging.LogRequest(logger))
+	engine.Use(gin.Recovery())
+
+	return engine
 }
 
 func setupV1Routes(rtr *gin.Engine) {
@@ -22,9 +47,9 @@ func setupV1Routes(rtr *gin.Engine) {
 }
 
 func addHealthEndpoints(rtr *gin.Engine) {
-	v1 := rtr.Group(endpoints.HealthGroup)
+	v1 := rtr.Group(fmt.Sprintf("%s%s", v1Api, endpoints.HealthGroup))
 	{
 		hello := endpoints.BuildHelloEndpoint()
-		v1.GET(hello.URL, hello.Handlers ...)
+		v1.GET(hello.URL, hello.Handlers...)
 	}
 }
