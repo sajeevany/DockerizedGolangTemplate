@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sajeevany/DockerizedGolangTemplate/internal/config"
 	"github.com/sajeevany/DockerizedGolangTemplate/internal/endpoints"
 	"github.com/sajeevany/DockerizedGolangTemplate/internal/logging"
 	lm "github.com/sajeevany/DockerizedGolangTemplate/internal/logging/middleware"
@@ -16,16 +17,24 @@ func main() {
 	//Create a universal logger
 	logger := logging.Init()
 
+	//Read configuration file
+	conf, err := config.Read("/config/default.json", logger)
+	if err != nil{
+		//Log error and use default values returned
+		logger.Error(err)
+	}
+
 	//Initialize router
 	router := setupRouter(logger)
 
 	//Setup routes
 	setupV1Routes(router)
 
-	//Use default route of 8080. TODO add config reader to get the port
-	err := router.Run(":8080")
-	if err != nil {
-		logger.Error("An error occurred when starting the router. <%v>", err)
+	//Use default route of 8080.
+	port := fmt.Sprintf(":%d", conf.Port)
+	routerErr := router.Run(port)
+	if routerErr != nil {
+		logger.Error("An error occurred when starting the router. <%v>", routerErr)
 	}
 
 }

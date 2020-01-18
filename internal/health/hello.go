@@ -8,8 +8,11 @@ import (
 	"net/http"
 )
 
-func Hello(ctx *gin.Context) {
+type Ping struct{
+	Response string `json:"response" required:"true" description:"Server hello response" example:"hello"`
+}
 
+func Hello(ctx *gin.Context) {
 	//Get logger from context
 	log := ctx.MustGet(logging.LoggerKey)
 	if _, ok := (log).(*logrus.Logger); !ok {
@@ -18,5 +21,5 @@ func Hello(ctx *gin.Context) {
 	}
 
 	//Set response
-	ctx.JSON(http.StatusOK, "hello")
+	ctx.JSON(http.StatusOK, Ping{Response: "hello"})
 }
