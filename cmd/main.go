@@ -34,7 +34,7 @@ func main() {
 	port := fmt.Sprintf(":%d", conf.Port)
 	routerErr := router.Run(port)
 	if routerErr != nil {
-		logger.Error("An error occurred when starting the router. <%v>", routerErr)
+		logger.Errorf("An error occurred when starting the router. <%v>", routerErr)
 	}
 
 }

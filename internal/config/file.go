@@ -19,7 +19,7 @@ func (c Conf) getFields() logrus.Fields {
 //Read - reads config file referenced by conf
 func Read(conf string, logger *logrus.Logger) (Conf, error) {
 
-	logger.Debug("Checking if file <%v> exists", conf)
+	logger.Debugf("Checking if file <%v> exists", conf)
 
 	if _, err := os.Stat(conf); err == nil {
 		//file exists. Go forth and conquer
@@ -28,7 +28,7 @@ func Read(conf string, logger *logrus.Logger) (Conf, error) {
 		data, err := ioutil.ReadFile(conf)
 		if err != nil{
 			defaultConf := getDefaultConf()
-			logger.WithFields(defaultConf.getFields()).Errorf("Error reading configuration file <%v>. Returning default config. Encountered error <%v>", conf, defaultConf, err)
+			logger.WithFields(defaultConf.getFields()).Errorf("Error reading configuration file <%v>. Returning default config <%v>. Encountered error <%v>", conf, defaultConf, err)
 			return defaultConf, err
 		}
 
@@ -36,7 +36,7 @@ func Read(conf string, logger *logrus.Logger) (Conf, error) {
 		var cStruct Conf
 		if convErr := json.Unmarshal(data, &cStruct); convErr != nil{
 			defaultConf := getDefaultConf()
-			logger.WithFields(defaultConf.getFields()).Errorf("Error unmarshalling configuration file <%v>. Returning defaults. Encountered error <%v>.", conf, defaultConf, convErr)
+			logger.WithFields(defaultConf.getFields()).Errorf("Error unmarshalling configuration file <%v>. Returning defaults <%v>. Encountered error <%v>.", conf, defaultConf, convErr)
 			return defaultConf, convErr
 		}
 
