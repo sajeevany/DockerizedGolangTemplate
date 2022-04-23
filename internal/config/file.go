@@ -26,7 +26,7 @@ func Read(conf string, logger *logrus.Logger) (Conf, error) {
 
 		//Read file contents
 		data, err := ioutil.ReadFile(conf)
-		if err != nil{
+		if err != nil {
 			defaultConf := getDefaultConf()
 			logger.WithFields(defaultConf.getFields()).Errorf("Error reading configuration file <%v>. Returning default config <%v>. Encountered error <%v>", conf, defaultConf, err)
 			return defaultConf, err
@@ -34,7 +34,7 @@ func Read(conf string, logger *logrus.Logger) (Conf, error) {
 
 		//Unmarshal data as json
 		var cStruct Conf
-		if convErr := json.Unmarshal(data, &cStruct); convErr != nil{
+		if convErr := json.Unmarshal(data, &cStruct); convErr != nil {
 			defaultConf := getDefaultConf()
 			logger.WithFields(defaultConf.getFields()).Errorf("Error unmarshalling configuration file <%v>. Returning defaults <%v>. Encountered error <%v>.", conf, defaultConf, convErr)
 			return defaultConf, convErr
@@ -47,7 +47,7 @@ func Read(conf string, logger *logrus.Logger) (Conf, error) {
 		defaultConf := getDefaultConf()
 		logger.WithFields(defaultConf.getFields()).Errorf("Configuration file <%v> does not exist. Using defaults.  Encountered error <%v>", conf, err)
 		return defaultConf, err
-	} else{
+	} else {
 		//https://stackoverflow.com/questions/12518876/how-to-check-if-a-file-exists-in-go
 		defaultConf := getDefaultConf()
 		logger.WithFields(defaultConf.getFields()).Errorf("Error while evaluating if config file <%v> exists.", conf)

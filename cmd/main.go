@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const v1Api = "/api/v1"
+const v1Api = "/v1"
 
 func main() {
 
@@ -19,7 +19,7 @@ func main() {
 
 	//Read configuration file
 	conf, err := config.Read("/config/default.json", logger)
-	if err != nil{
+	if err != nil {
 		//Log error and use default values returned
 		logger.Error(err)
 	}
@@ -28,7 +28,7 @@ func main() {
 	router := setupRouter(logger)
 
 	//Setup routes
-	setupV1Routes(router)
+	setupV1Routes(logger, router)
 
 	//Use default route of 8080.
 	port := fmt.Sprintf(":%d", conf.Port)
@@ -52,14 +52,14 @@ func setupRouter(logger *logrus.Logger) *gin.Engine {
 	return engine
 }
 
-func setupV1Routes(rtr *gin.Engine) {
-	addHealthEndpoints(rtr)
+func setupV1Routes(logger *logrus.Logger, rtr *gin.Engine) {
+	addHealthEndpoints(logger, rtr)
 }
 
-func addHealthEndpoints(rtr *gin.Engine) {
+func addHealthEndpoints(logger *logrus.Logger, rtr *gin.Engine) {
 	v1 := rtr.Group(fmt.Sprintf("%s%s", v1Api, endpoints.HealthGroup))
 	{
-		hello := endpoints.BuildHelloEndpoint()
+		hello := endpoints.BuildHelloEndpoint(logger)
 		v1.GET(hello.URL, hello.Handlers...)
 	}
 }
