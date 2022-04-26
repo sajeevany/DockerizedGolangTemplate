@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sajeevany/DockerizedGolangTemplate/internal/config"
-	"github.com/sajeevany/DockerizedGolangTemplate/internal/endpoints"
+	"github.com/sajeevany/DockerizedGolangTemplate/internal/health"
 	"github.com/sajeevany/DockerizedGolangTemplate/internal/logging"
 	lm "github.com/sajeevany/DockerizedGolangTemplate/internal/logging/middleware"
+	"github.com/sajeevany/DockerizedGolangTemplate/internal/pd"
 	"github.com/sirupsen/logrus"
 )
 
@@ -54,12 +55,21 @@ func setupRouter(logger *logrus.Logger) *gin.Engine {
 
 func setupV1Routes(logger *logrus.Logger, rtr *gin.Engine) {
 	addHealthEndpoints(logger, rtr)
+	addPDEndpoints(logger, rtr)
+}
+
+func addPDEndpoints(logger *logrus.Logger, rtr *gin.Engine) {
+	v1 := rtr.Group(fmt.Sprintf("%s%s", v1Api, pd.Group))
+	{
+		pdEndpoint := pd.BuildGetUsersEndpoint(logger)
+		v1.GET(pdEndpoint.URL, pdEndpoint.Handlers...)
+	}
 }
 
 func addHealthEndpoints(logger *logrus.Logger, rtr *gin.Engine) {
-	v1 := rtr.Group(fmt.Sprintf("%s%s", v1Api, endpoints.HealthGroup))
+	v1 := rtr.Group(fmt.Sprintf("%s%s", v1Api, health.Group))
 	{
-		hello := endpoints.BuildHelloEndpoint(logger)
+		hello := health.BuildGetHelloEndpoint(logger)
 		v1.GET(hello.URL, hello.Handlers...)
 	}
 }
